@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 
+#initialize the sqlalchemy obj
 db = SQLAlchemy()
 
-#defining the author model class
+# defining the author model class
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
@@ -16,7 +17,7 @@ class Author(db.Model):
         return f'Author(name={self.name}, birth_date={self.birth_date}, date_of_death={self.date_of_death})'
 
 
-#defining the book model
+# defining the book model
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(150), nullable=False)
