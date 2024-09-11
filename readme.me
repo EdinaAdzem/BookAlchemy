@@ -1,0 +1,45 @@
+# Book Alchemy
+
+**Book Alchemy** is a Flask web application for managing a digital library. Users can add, delete, sort, and search for books and authors. The application integrates with OMDB API to fetch book cover images.
+
+## Features
+
+- View a list of all books with cover images.
+- Add new authors and books to the library.
+- Sort books by title or author.
+- Search for books by title or author.
+- Delete books and their authors if no other books are associated.
+
+## Technologies Used
+
+- Flask
+- SQLAlchemy
+- SQLite
+- OMDB API
+- Jinja2 (templating engine)
+- Bootstrap (for styling)
+
+### Prerequisites
+
+- Python 3.12 or higher
+- `pip` (Python package installer)
+
+
+
+**Navigate to `http://127.0.0.1:5000/` in your web browser to view the application.**
+
+### Routes
+
+- **`/`**: Home page displaying all books with cover images.
+- **`/add_author`**: Form to add a new author.
+- **`/add_book`**: Form to add a new book.
+- **`/sort_books`**: Sort books by title or author.
+- **`/search`**: Search for books by title or author.
+- **`/book/<int:book_id>/delete`**: Delete a specific book and its author if they have no other books.
+
+
+
+- [OMDB API](http://www.omdbapi.com/) for cover images.
+- [Flask Documentation](https://flask.palletsprojects.com/en/latest/) for guidance on building Flask applications.
+- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/en/14/) for database management.
+
