@@ -8,13 +8,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <form method="GET" action="/sort_books">
-        <label for="sort_by">Sort by:</label>
+        <label for="sort_by">Sort Books by:</label>
         <select name="sort_by" id="sort_by">
             <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
             <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
         </select>
         <input type="submit" value="Sort">
     </form>
+
+    <div class="search-container">
+        <form action="{{ url_for('search_books') }}" method="GET">
+            <input type="text" name="query" placeholder="Search these supa dupa books by: title or author">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
     <style>
         table {
@@ -54,6 +61,12 @@
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
+                    <td>
+                        <!-- delete attampt-->
+                        <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete Book</button>
+                        </form>
+                    </td>
                 <td>
                     <img src="{{ book.cover }}" alt="{{ book.title }}" onerror="this.src='/static/default_image.jpg';">
                 </td>

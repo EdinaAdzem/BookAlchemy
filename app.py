@@ -47,6 +47,7 @@ def home():
         else:
             cover_url = 'static/efault_image.jpg'
         books_with_covers.append({
+            'id': book.id,
             'title': book.title,
             'author': book.author.name,
             'cover': cover_url
@@ -127,6 +128,59 @@ def sort_books():
         })
 
     return render_template('home.html', books=books_with_covers, sort_by=sort_by)
+
+
+@app.route('/search', methods=['GET'])
+def search_books():
+    """Search books by autor, title"""
+    query = request.args.get('query', '').strip()
+
+    if query:
+        books = Book.query.join(Author).filter(
+            (Book.title.ilike(f'%{query}%')) | (Author.name.ilike(f'%{query}%'))
+        ).all()
+    else:
+        books = Book.query.all()
+
+    books_with_covers = []
+    for book in books:
+        response = requests.get(f'{URL_API}?apikey={API_KEY}&t={book.title}')
+        if response.status_code == 200:
+            data = response.json()
+            cover_url = data.get('Poster', 'static/default_image.jpg')
+        else:
+            cover_url = 'static/default_image.jpg'
+        books_with_covers.append({
+            'title': book.title,
+            'author': book.author.name,
+            'cover': cover_url
+        })
+
+    return render_template('home.html', books=books_with_covers)
+
+@app.route('/book/<int:book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    """delete book by  book_id."""
+    book = Book.query.get_or_404(book_id)
+    author = book.author
+
+    try:
+        db.session.delete(book)
+        db.session.commit()
+
+        #condition to check the author
+        if not Book.query.filter_by(author_id=author.id).first():
+            # delete author also
+            db.session.delete(author)
+            db.session.commit()
+
+        flash('Book deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting book: {e}', 'danger')
+
+    return redirect(url_for('home'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
