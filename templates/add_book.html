@@ -1,15 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+    <title>Add Book</title>
+</head>
+<body>
+    <h1>Add Book</h1>
 
-  <form action="/add_author" method="POST">
-  <!-- Add the form here -->
-  </form>
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-  </body>
+    <!-- Form for adding a book -->
+    <form action="{{ url_for('add_book') }}" method="POST">
+        <label for="title">Book Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="author_id">Select Author:</label>
+        <select id="author_id" name="author_id" required>
+            <option value="">-- Select Author --</option>
+            {% for author in authors %}
+                <option value="{{ author.id }}">{{ author.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Add Book</button>
+    </form>
+</body>
 </html>

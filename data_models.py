@@ -23,7 +23,7 @@ class Book(db.Model):
     title = db.Column(db.String(150), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     author = db.relationship('Author', backref=db.backref('books', lazy=True))
-
+    isbn = db.Column(db.String(13), unique=True, nullable=True)
     def __repr__(self):
         return f'<Book {self.title}>'
 
