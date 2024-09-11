@@ -34,6 +34,7 @@ db.init_app(app)
 
 @app.route('/')
 def home():
+    """Home route function that handles the query and api calls to get the books info """
     books = Book.query.all()  # Query all books from the database
 
     # Prepare a list of books with cover images from OMDB API
@@ -56,6 +57,7 @@ def home():
 
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
+    """add_author route utilizes the post request and inserts the data to the database"""
     if request.method == 'POST':
         name = request.form['name']
         birth_date_str = request.form.get('birth_date')
@@ -77,6 +79,7 @@ def add_author():
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
+    """add_book route utilizes the post request and inserts the data to the database"""
     authors = Author.query.all()
 
     if request.method == 'POST':
@@ -97,7 +100,7 @@ def add_book():
 
 @app.route('/sort_books')
 def sort_books():
-    #the sorting parameter
+    """sorting"""
     sort_by = request.args.get('sort_by', 'title')
 
     #query and sort
