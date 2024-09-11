@@ -122,6 +122,7 @@ def sort_books():
             cover_url = 'static/default_image.jpg'
 
         books_with_covers.append({
+            'id': book.id,
             'title': book.title,
             'author': book.author.name,
             'cover': cover_url
@@ -151,6 +152,7 @@ def search_books():
         else:
             cover_url = 'static/default_image.jpg'
         books_with_covers.append({
+            'id': book.id,
             'title': book.title,
             'author': book.author.name,
             'cover': cover_url
