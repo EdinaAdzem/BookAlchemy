@@ -5,6 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Books</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <form method="GET" action="/sort_books">
+        <label for="sort_by">Sort by:</label>
+        <select name="sort_by" id="sort_by">
+            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
+            <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
+        </select>
+        <input type="submit" value="Sort">
+    </form>
+
+    <style>
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #d0f0c0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #c0e4c0;
+        }
+        td img {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>Travel Books</h1>
@@ -13,13 +46,17 @@
             <tr>
                 <th>Title</th>
                 <th>Author</th>
+                <th>Cover</th>
             </tr>
         </thead>
         <tbody>
             {% for book in books %}
             <tr>
                 <td>{{ book.title }}</td>
-                <td>{{ book.author.name }}</td>
+                <td>{{ book.author }}</td>
+                <td>
+                    <img src="{{ book.cover }}" alt="{{ book.title }}" onerror="this.src='/static/default_image.jpg';">
+                </td>
             </tr>
             {% endfor %}
         </tbody>

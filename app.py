@@ -3,9 +3,20 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 from datetime import datetime
+import requests
+
+""" To run the application  - run on terminal the following
+export FLASK_APP=app.py
+export FLASK_ENV=development
+flask run
+"""
 
 # Create an instance of the Flask app
 app = Flask(__name__)
+
+# Define the OMDB API URL and key
+URL_API = "http://www.omdbapi.com/"
+API_KEY = "c3bb5c1c"
 
 # Configure the SQLite database URI
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -23,8 +34,24 @@ db.init_app(app)
 
 @app.route('/')
 def home():
-    books = Book.query.all()  # always query all the books
-    return render_template('home.html', books=books)
+    books = Book.query.all()  # Query all books from the database
+
+    # Prepare a list of books with cover images from OMDB API
+    books_with_covers = []
+    for book in books:
+        response = requests.get(f'{URL_API}?apikey={API_KEY}&t={book.title}')
+        if response.status_code == 200:
+            data = response.json()
+            cover_url = data.get('Poster', 'static/default_image.jpg')
+        else:
+            cover_url = 'static/efault_image.jpg'
+        books_with_covers.append({
+            'title': book.title,
+            'author': book.author.name,
+            'cover': cover_url
+        })
+
+    return render_template('home.html', books=books_with_covers)
 
 
 @app.route('/add_author', methods=['GET', 'POST'])
@@ -66,6 +93,37 @@ def add_book():
             flash(f'Error adding book: {e}', 'danger')
     return render_template('add_book.html', authors=authors)
 
+
+
+@app.route('/sort_books')
+def sort_books():
+    #the sorting parameter
+    sort_by = request.args.get('sort_by', 'title')
+
+    #query and sort
+    if sort_by == 'title':
+        books = Book.query.order_by(Book.title).all()
+    elif sort_by == 'author':
+        books = Book.query.join(Author).order_by(Author.name).all()
+    else:
+        books = Book.query.all()
+
+    books_with_covers = []
+    for book in books:
+        response = requests.get(f'{URL_API}?apikey={API_KEY}&t={book.title}')
+        if response.status_code == 200:
+            data = response.json()
+            cover_url = data.get('Poster', 'static/default_image.jpg')
+        else:
+            cover_url = 'static/default_image.jpg'
+
+        books_with_covers.append({
+            'title': book.title,
+            'author': book.author.name,
+            'cover': cover_url
+        })
+
+    return render_template('home.html', books=books_with_covers, sort_by=sort_by)
 
 if __name__ == "__main__":
     app.run(debug=True)
