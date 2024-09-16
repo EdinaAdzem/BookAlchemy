@@ -15,8 +15,8 @@ flask run
 app = Flask(__name__)
 
 # Define the OMDB API URL and key
-URL_API = "http://www.omdbapi.com/"
-API_KEY = "c3bb5c1c"
+# URL_API = "http://www.omdbapi.com/"
+# API_KEY = "c3bb5c1c"
 
 # Configure the SQLite database URI
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -37,20 +37,14 @@ def home():
     """Home route function that handles the query and api calls to get the books info """
     books = Book.query.all()  # Query all books from the database
 
-    # Prepare a list of books with cover images from OMDB API
+    # remove the api call
     books_with_covers = []
     for book in books:
-        response = requests.get(f'{URL_API}?apikey={API_KEY}&t={book.title}')
-        if response.status_code == 200:
-            data = response.json()
-            cover_url = data.get('Poster', 'static/default_image.jpg')
-        else:
-            cover_url = 'static/efault_image.jpg'
         books_with_covers.append({
             'id': book.id,
             'title': book.title,
             'author': book.author.name,
-            'cover': cover_url
+            'cover': 'static/default_image.jpg'
         })
 
     return render_template('home.html', books=books_with_covers)
@@ -86,6 +80,7 @@ def add_book():
     if request.method == 'POST':
         title = request.form['title']
         author_id = request.form['author_id']
+        isbn = request.form.get('isbn')#add to handle the isbn
         new_book = Book(title=title, author_id=author_id)
         try:
             db.session.add(new_book)
@@ -113,13 +108,9 @@ def sort_books():
         books = Book.query.all()
 
     books_with_covers = []
+
     for book in books:
-        response = requests.get(f'{URL_API}?apikey={API_KEY}&t={book.title}')
-        if response.status_code == 200:
-            data = response.json()
-            cover_url = data.get('Poster', 'static/default_image.jpg')
-        else:
-            cover_url = 'static/default_image.jpg'
+        cover_url = 'static/default_image.jpg'
 
         books_with_covers.append({
             'id': book.id,
@@ -145,12 +136,8 @@ def search_books():
 
     books_with_covers = []
     for book in books:
-        response = requests.get(f'{URL_API}?apikey={API_KEY}&t={book.title}')
-        if response.status_code == 200:
-            data = response.json()
-            cover_url = data.get('Poster', 'static/default_image.jpg')
-        else:
-            cover_url = 'static/default_image.jpg'
+
+        cover_url = 'static/default_image.jpg'
         books_with_covers.append({
             'id': book.id,
             'title': book.title,

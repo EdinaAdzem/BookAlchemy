@@ -12,7 +12,7 @@
     <!-- Display flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <ul>
+            <ul class="flash-messages">
             {% for category, message in messages %}
                 <li class="{{ category }}">{{ message }}</li>
             {% endfor %}
@@ -32,9 +32,15 @@
                 <option value="{{ author.id }}">{{ author.name }}</option>
             {% endfor %}
         </select>
-
+        <!--handling isbn-->
+        <label for="isbn">ISBN:</label>
+        <input type="text" id="isbn" name="isbn">
         <button type="submit">Add Book</button>
     </form>
-<a href="{{ url_for('home') }}">Navigate back to Home Page</a>
+    <!-- Navigation Links added as per review suggestions -->
+    <nav>
+        <a href="{{ url_for('home') }}">Back to Home Page</a>
+        <a href="{{ url_for('add_author') }}">Add Author</a>
+    </nav>
 </body>
 </html>

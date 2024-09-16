@@ -35,3 +35,15 @@ input[type="text"], input[type="date"], input[type="submit"] {
 .danger {
     color: red;
 }
+
+
+.flash-messages {
+    list-style-type: none;
+    padding: 0;
+}
+.flash-messages li.success {
+    color: green;
+}
+.flash-messages li.danger {
+    color: red;
+}

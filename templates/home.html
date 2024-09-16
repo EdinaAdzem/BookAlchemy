@@ -7,22 +7,6 @@
     <title>Travel Books</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <form method="GET" action="/sort_books">
-        <label for="sort_by">Sort Books by:</label>
-        <select name="sort_by" id="sort_by">
-            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
-            <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
-        </select>
-        <input type="submit" value="Sort">
-    </form>
-
-    <div class="search-container">
-        <form action="{{ url_for('search_books') }}" method="GET">
-            <input type="text" name="query" placeholder="Search these supa dupa books by: title or author">
-            <button type="submit">Search</button>
-        </form>
-    </div>
-
     <style>
         table {
             width: 80%;
@@ -46,8 +30,40 @@
         }
     </style>
 </head>
+
 <body>
+
     <h1>Travel Books</h1>
+     <!-- Navigation Links added as per review suggestions -->
+    <nav>
+        <a href="{{ url_for('add_author') }}">Add Author</a>
+        <a href="{{ url_for('add_book') }}">Add Book</a>
+    </nav>
+
+    <!-- sort form -->
+    <form method="GET" action="/sort_books">
+        <label for="sort_by">Sort Books by:</label>
+        <select name="sort_by" id="sort_by">
+            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
+            <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
+        </select>
+        <input type="submit" value="Sort">
+    </form>
+
+    <!-- searching form -->
+    <div class="search-container">
+        <form action="{{ url_for('search_books') }}" method="GET">
+            <label>Search Books</label>
+            <input type="text" name="query" placeholder="Search these supa dupa books by: title or author">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Reset form -->
+    <form method="GET" action="{{ url_for('home') }}">
+        <input type="submit" value="Reset Search and Sort">
+    </form>
+
     <table>
         <thead>
             <tr>
@@ -64,7 +80,7 @@
                     <td>
                         <!-- delete attampt-->
                         <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
-                            <button type="submit" class="btn btn-danger">Delete Book</button>
+                            <button type="submit" class="btn btn-danger" onclick="return confirmDeletion()">Delete Book</button>
                         </form>
                     </td>
                 <td>
@@ -74,5 +90,13 @@
             {% endfor %}
         </tbody>
     </table>
+    <!-- Add JavaScript code for confirmation dialog -->
+    <script>
+        function confirmDeletion() {
+            return confirm("Are you sure you want to delete this book?");
+        }
+    </script>
+
+
 </body>
 </html>
