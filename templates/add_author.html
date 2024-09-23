@@ -8,6 +8,10 @@
 </head>
 <body>
     <h1>Add Author</h1>
+    <nav>
+        <a href="{{ url_for('home') }}"><span class="icon">🏠</span>Back to Home Page</a>
+        <a href="{{ url_for('add_book') }}"><span class="icon">➕</span>Add Book</a>
+    </nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -21,20 +25,13 @@
 
     <form method="POST" action="{{ url_for('add_author') }}">
         <label for="name">Author Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
-
+        <input type="text" id="name" name="name" required><br>
         <label for="birth_date">Birth Date (optional):</label><br>
-        <input type="date" id="birth_date" name="birth_date"><br><br>
-
+        <input type="date" id="birth_date" name="birth_date"><br>
         <label for="date_of_death">Date of Death (optional):</label><br>
-        <input type="date" id="date_of_death" name="date_of_death"><br><br>
-
+        <input type="date" id="date_of_death" name="date_of_death"><br>
         <input type="submit" value="Add Author">
     </form>
-    <!-- Navigation Links added as per review suggestions -->
-    <nav>
-        <a href="{{ url_for('home') }}">Back to Home Page</a>
-        <a href="{{ url_for('add_book') }}">Add Book</a>
-    </nav>
+
 </body>
 </html>

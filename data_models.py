@@ -24,6 +24,7 @@ class Book(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     author = db.relationship('Author', backref=db.backref('books', lazy=True))
     isbn = db.Column(db.String(13), unique=True, nullable=True)
+    cover_image = db.Column(db.String, nullable=True)
     def __repr__(self):
         return f'<Book {self.title}>'
 

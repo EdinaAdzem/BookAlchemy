@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 from datetime import datetime
 import requests
+from flask_migrate import Migrate
 
 """ To run the application  - run on terminal the following
 export FLASK_APP=app.py
@@ -14,10 +15,6 @@ flask run
 # Create an instance of the Flask app
 app = Flask(__name__)
 
-# Define the OMDB API URL and key
-# URL_API = "http://www.omdbapi.com/"
-# API_KEY = "c3bb5c1c"
-
 # Configure the SQLite database URI
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data', 'library.sqlite')
@@ -27,28 +24,33 @@ app.config['SECRET_KEY'] = 'WORKDARNIT'
 # Bind the SQLAlchemy object to the Flask app
 db.init_app(app)
 
-
 # Create once
 # with app.app_context():
 # db.create_all()
 
+# Add migration support
+migrate = Migrate(app, db)
+
 @app.route('/')
 def home():
-    """Home route function that handles the query and api calls to get the books info """
+    """Home route that displays all books."""
     books = Book.query.all()  # Query all books from the database
 
-    # remove the api call
     books_with_covers = []
     for book in books:
+        if book.isbn:
+            cover_url = f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg"
+        else:
+            cover_url = url_for('static', filename='cover_image.jpg')
+
         books_with_covers.append({
             'id': book.id,
             'title': book.title,
-            'author': book.author.name,
-            'cover': 'static/default_image.jpg'
+            'author': book.author.name if book.author else 'Unknown Author',
+            'cover': cover_url
         })
 
     return render_template('home.html', books=books_with_covers)
-
 
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
@@ -74,14 +76,20 @@ def add_author():
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
-    """add_book route utilizes the post request and inserts the data to the database"""
+    """Route to add a new book."""
     authors = Author.query.all()
 
     if request.method == 'POST':
         title = request.form['title']
         author_id = request.form['author_id']
-        isbn = request.form.get('isbn')#add to handle the isbn
-        new_book = Book(title=title, author_id=author_id)
+        isbn = request.form.get('isbn')
+        cover_image = request.form.get('cover_image')
+
+        if not isbn:
+            flash('ISBN is required!', 'danger')
+            return redirect(url_for('add_book'))
+
+        new_book = Book(title=title, author_id=author_id, isbn=isbn, cover_image=cover_image)
         try:
             db.session.add(new_book)
             db.session.commit()
@@ -90,8 +98,8 @@ def add_book():
         except Exception as e:
             db.session.rollback()
             flash(f'Error adding book: {e}', 'danger')
-    return render_template('add_book.html', authors=authors)
 
+    return render_template('add_book.html', authors=authors)
 
 
 @app.route('/sort_books')
@@ -110,8 +118,8 @@ def sort_books():
     books_with_covers = []
 
     for book in books:
-        cover_url = 'static/default_image.jpg'
-
+        cover_url = book.cover_image if book.cover_image else 'static/cover_image.jpg'
+        print(f"Cover URL: {cover_url}")
         books_with_covers.append({
             'id': book.id,
             'title': book.title,
@@ -136,8 +144,8 @@ def search_books():
 
     books_with_covers = []
     for book in books:
-
-        cover_url = 'static/default_image.jpg'
+        cover_url = book.cover_image if book.cover_image else 'static/cover_image.jpg'
+        print(f"Cover URL: {cover_url}")
         books_with_covers.append({
             'id': book.id,
             'title': book.title,

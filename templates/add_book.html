@@ -8,7 +8,11 @@
 </head>
 <body>
     <h1>Add Book</h1>
-
+    <!-- Navigation Links added as per review suggestions -->
+    <nav>
+        <a href="{{ url_for('home') }}"><span class="icon">🏠</span>Back to Home Page</a>
+        <a href="{{ url_for('add_author') }}"><span class="icon">➕</span>Add Author</a>
+    </nav>
     <!-- Display flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -25,22 +29,21 @@
         <label for="title">Book Title:</label>
         <input type="text" id="title" name="title" required>
 
+        <!--handling isbn-->
+        <label for="isbn">ISBN:</label>
+        <input type="text" id="isbn" name="isbn"><br>
+        <label for="cover_image">Cover Image URL:</label>
+        <input type="text" id="cover_image" name="cover_image"><br>
         <label for="author_id">Select Author:</label>
         <select id="author_id" name="author_id" required>
             <option value="">-- Select Author --</option>
             {% for author in authors %}
                 <option value="{{ author.id }}">{{ author.name }}</option>
             {% endfor %}
-        </select>
-        <!--handling isbn-->
-        <label for="isbn">ISBN:</label>
-        <input type="text" id="isbn" name="isbn">
-        <button type="submit">Add Book</button>
+        </select><br>
+        <br>
+        <input type="submit" value="Add Book">
     </form>
-    <!-- Navigation Links added as per review suggestions -->
-    <nav>
-        <a href="{{ url_for('home') }}">Back to Home Page</a>
-        <a href="{{ url_for('add_author') }}">Add Author</a>
-    </nav>
+
 </body>
 </html>

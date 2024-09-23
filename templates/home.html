@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Books</title>
+    <title align=center>Travel Books</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <style>
@@ -34,69 +34,75 @@
 <body>
 
     <h1>Travel Books</h1>
-     <!-- Navigation Links added as per review suggestions -->
+    <!-- Navigation Links added as per review suggestions -->
     <nav>
-        <a href="{{ url_for('add_author') }}">Add Author</a>
-        <a href="{{ url_for('add_book') }}">Add Book</a>
+    <a href="{{ url_for('home') }}"><span class="icon">🏠</span>Back to Home Page</a>
+    <a href="{{ url_for('add_book') }}"><span class="icon">➕</span>Add Book</a>
+    <a href="{{ url_for('add_author') }}"><span class="icon">➕</span>Add Author</a>
     </nav>
-
-    <!-- sort form -->
-    <form method="GET" action="/sort_books">
-        <label for="sort_by">Sort Books by:</label>
-        <select name="sort_by" id="sort_by">
-            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
-            <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
-        </select>
-        <input type="submit" value="Sort">
-    </form>
-
-    <!-- searching form -->
-    <div class="search-container">
-        <form action="{{ url_for('search_books') }}" method="GET">
-            <label>Search Books</label>
-            <input type="text" name="query" placeholder="Search these supa dupa books by: title or author">
-            <button type="submit">Search</button>
-        </form>
-    </div>
-
-    <!-- Reset form -->
-    <form method="GET" action="{{ url_for('home') }}">
-        <input type="submit" value="Reset Search and Sort">
-    </form>
-
     <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Cover</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for book in books %}
-            <tr>
-                <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
-                    <td>
-                        <!-- delete attampt-->
-                        <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
-                            <button type="submit" class="btn btn-danger" onclick="return confirmDeletion()">Delete Book</button>
-                        </form>
-                    </td>
-                <td>
-                    <img src="{{ book.cover }}" alt="{{ book.title }}" onerror="this.src='/static/default_image.jpg';">
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <!-- Add JavaScript code for confirmation dialog -->
-    <script>
-        function confirmDeletion() {
-            return confirm("Are you sure you want to delete this book?");
-        }
-    </script>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Cover</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>
+                <img src="{{ book.cover }}" alt="Cover of {{ book.title }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='cover_image.jpg') }}';">
+            </td>
+            <td>
+                <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirmDeletion()">Delete Book</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
+<table>
+    <tr>
+        <td>
+            <!-- Sort form -->
+            <form method="GET" action="/sort_books">
+                <label for="sort_by">Sort Books by:</label>
+                <select name="sort_by" id="sort_by">
+                    <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
+                    <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
+                </select>
+                <input type="submit" value="Sort">
+            </form>
+        </td>
+        <td>
+            <!-- Search form -->
+            <form action="{{ url_for('search_books') }}" method="GET">
+                <label>Search Books</label>
+                <input type="text" name="query" placeholder="Search these supa dupa books by: title or author">
+                <button type="submit">Search</button>
+            </form>
+        </td>
+        <td>
+            <!-- Reset form -->
+            <form method="GET" action="{{ url_for('home') }}">
+                <input type="submit" value="Reset Search and Sort">
+            </form>
+        </td>
+    </tr>
+</table>
+
+<!-- Add JavaScript code for confirmation dialog -->
+<script>
+    function confirmDeletion() {
+        return confirm("Are you sure you want to delete this book?");
+    }
+</script>
 
 </body>
 </html>
