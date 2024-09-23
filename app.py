@@ -31,6 +31,20 @@ db.init_app(app)
 # Add migration support
 migrate = Migrate(app, db)
 
+
+def fetch_cover_image(isbn):
+    # URL for fetching the cover image directly
+    api_url = f"https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg"
+    response = requests.get(api_url)
+
+    # Check if the image exists
+    if response.status_code == 200 and 'image' in response.headers.get('Content-Type', ''):
+        return api_url
+
+    # Fallback only if no image in api
+    return 'static/cover_image.jpg'
+
+
 @app.route('/')
 def home():
     """Home route that displays all books."""
@@ -38,10 +52,7 @@ def home():
 
     books_with_covers = []
     for book in books:
-        if book.isbn:
-            cover_url = f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg"
-        else:
-            cover_url = url_for('static', filename='cover_image.jpg')
+        cover_url = book.cover_image if book.cover_image else url_for('static', filename='cover_image.JPG')
 
         books_with_covers.append({
             'id': book.id,
@@ -83,18 +94,19 @@ def add_book():
         title = request.form['title']
         author_id = request.form['author_id']
         isbn = request.form.get('isbn')
-        cover_image = request.form.get('cover_image')
 
         if not isbn:
             flash('ISBN is required!', 'danger')
             return redirect(url_for('add_book'))
+        #try getting the isbn
+        cover_image = fetch_cover_image(isbn)
 
         new_book = Book(title=title, author_id=author_id, isbn=isbn, cover_image=cover_image)
         try:
             db.session.add(new_book)
             db.session.commit()
             flash('Book added successfully!', 'success')
-            return redirect(url_for('add_book'))
+            return redirect(url_for('home'))
         except Exception as e:
             db.session.rollback()
             flash(f'Error adding book: {e}', 'danger')
@@ -116,15 +128,14 @@ def sort_books():
         books = Book.query.all()
 
     books_with_covers = []
-
     for book in books:
-        cover_url = book.cover_image if book.cover_image else 'static/cover_image.jpg'
-        print(f"Cover URL: {cover_url}")
+        cover_image = book.cover_image if book.cover_image else fetch_cover_image(book.isbn)
+        print(f"Cover URL: {cover_image}")
         books_with_covers.append({
             'id': book.id,
             'title': book.title,
             'author': book.author.name,
-            'cover': cover_url
+            'cover': cover_image
         })
 
     return render_template('home.html', books=books_with_covers, sort_by=sort_by)
@@ -144,13 +155,13 @@ def search_books():
 
     books_with_covers = []
     for book in books:
-        cover_url = book.cover_image if book.cover_image else 'static/cover_image.jpg'
-        print(f"Cover URL: {cover_url}")
+        cover_image = book.cover_image if book.cover_image else 'static/cover_image.JPG'
+        print(f"Cover URL: {cover_image}")
         books_with_covers.append({
             'id': book.id,
             'title': book.title,
             'author': book.author.name,
-            'cover': cover_url
+            'cover': cover_image
         })
 
     return render_template('home.html', books=books_with_covers)
