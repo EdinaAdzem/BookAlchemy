@@ -12,43 +12,43 @@ export FLASK_ENV=development
 flask run
 """
 
-# Create an instance of the Flask app
+# instance of Flask app dudlidu
 app = Flask(__name__)
 
-# Configure the SQLite database URI
+# Configure the SQLite database URI, standardised
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data', 'library.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'WORKDARNIT'
 
-# Bind the SQLAlchemy object to the Flask app
+# Connect the SQLAlchemy object to the Flask application
 db.init_app(app)
 
 # Create once
 # with app.app_context():
 # db.create_all()
 
-# Add migration support
+# Add migration support, when in need to migrate a new column to the db
 migrate = Migrate(app, db)
 
 
 def fetch_cover_image(isbn):
-    # URL for fetching the cover image directly
+    # URL openlibrary api
     api_url = f"https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg"
     response = requests.get(api_url)
 
-    # Check if the image exists
+    # additional check for the image and status code 200 in the response
     if response.status_code == 200 and 'image' in response.headers.get('Content-Type', ''):
         return api_url
 
-    # Fallback only if no image in api
+    #if there is no cover_image in the api, use the static of Mrgi
     return 'static/cover_image.jpg'
 
 
 @app.route('/')
 def home():
     """Home route that displays all books."""
-    books = Book.query.all()  # Query all books from the database
+    books = Book.query.all()  # Query all books available in the database, utilise the 'query'
 
     books_with_covers = []
     for book in books:

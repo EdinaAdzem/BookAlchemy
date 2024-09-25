@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title align=center>Travel Books</title>
+    <title align=center>Bool Alchemy Management Library</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <style>
+        body {
+            background-color: #f0fff0;
+            font-family: Arial, sans-serif;
+        }
         table {
             width: 80%;
             margin: 20px auto;
@@ -33,10 +37,10 @@
 
 <body>
 
-    <h1>Travel Books</h1>
+    <h1>Bool Alchemy Management Library</h1>
     <!-- Navigation Links added as per review suggestions -->
     <nav>
-    <a href="{{ url_for('home') }}"><span class="icon">🏠</span>Back to Home Page</a>
+    <a href="{{ url_for('home') }}"><span class="icon">🏠</span>Home Page</a>
     <a href="{{ url_for('add_book') }}"><span class="icon">➕</span>Add Book</a>
     <a href="{{ url_for('add_author') }}"><span class="icon">➕</span>Add Author</a>
     </nav>
