@@ -1,57 +1,73 @@
-# Book Alchemy
+# Library Management System
 
-**Book Alchemy** is a Flask web application for managing a digital library. Users can add, delete, sort, and search for books and authors.
-
-## Features
-
-- View a list of all books.
-- Add new authors and books to the library.
-- Sort books by title or author.
-- Search for books by title or author.
-- Delete books and their authors if no other books are associated.
+A simple Flask-based Library Management System that allows users to add authors and books, display the list of books with cover images fetched from the Open Library API, search for books, sort them by title or author, and delete books (along with the author if they no longer have any books).
 
 ## Technologies Used
 
-- Flask
-- SQLAlchemy
-- SQLite
-- Jinja2 (templating engine)
-- Bootstrap (for styling)
+### 1. **Flask**
+   - **Flask** is the main web framework used to create the application, handle routing, manage HTTP requests, and render HTML templates.
+   - It also handles form submissions, flash messaging, and integrates with other libraries to interact with the database.
 
-### Prerequisites
+### 2. **SQLAlchemy**
+   - **SQLAlchemy** is used as the Object Relational Mapper (ORM) for handling database interactions in a Pythonic way.
+   - Models for `Author` and `Book` are defined using SQLAlchemy’s ORM functionality to create, query, update, and delete records in the SQLite database.
 
-- Python 3.12 or higher
-- `pip` (Python package installer)
+### 3. **Flask-Migrate**
+   - **Flask-Migrate** is used for handling database migrations, allowing easy updates to the database schema without losing data.
+   - This allows for creating and updating tables automatically as the model definitions evolve.
 
-### Setup
+### 4. **SQLite**
+   - **SQLite** is the database used to store all the data for authors and books.
+   - The database is configured to be simple, lightweight, and is perfect for small-scale projects without the need for a dedicated database server.
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/bookalchemy.git
-    ```
-2. Navigate to the project directory:
-    ```bash
-    cd bookalchemy
-    ```
-3. Install the required packages:
-    ```bash
-    pip install -r requirements.txt
-    ```
-4. Set environment variables and run the application:
-    ```bash
-    export FLASK_APP=app.py
-    export FLASK_ENV=development
-    flask run
-    ```
+### 5. **Open Library API**
+   - **Open Library API** is used to fetch book cover images by ISBN.
+   - The `fetch_cover_image()` function makes an HTTP request to the API to retrieve book covers dynamically.
 
-**Navigate to `http://127.0.0.1:5000/` in your web browser to view the application.**
+### 6. **Jinja2**
+   - **Jinja2** is used for rendering HTML templates in Flask.
+   - It enables dynamic content in HTML pages, such as displaying books with their titles, authors, and cover images.
 
-### Routes
+### 7. **HTML/CSS**
+   - The frontend is built using basic **HTML** for the structure of the pages and **CSS** for styling.
+   - Templates are rendered using Flask’s `render_template()` function.
 
-- **`/`**: Home page displaying all books.
-- **`/add_author`**: Form to add a new author.
-- **`/add_book`**: Form to add a new book.
-- **`/sort_books`**: Sort books by title or author.
-- **`/search`**: Search for books by title or author.
-- **`/book/<int:book_id>/delete`**: Delete a specific book and its author if they have no other books.
+### 8. **Flask Flash**
+   - **Flash messaging** is used to display success or error messages when adding authors or books, or when there is an issue with data submission.
 
+### 9. **Requests**
+   - The **Requests** library is used to make HTTP requests to the Open Library API for fetching book cover images.
+
+---
+
+## Features
+
+- **Add Author**: Add a new author to the library with optional birth and death dates.
+- **Add Book**: Add a new book to the library, select an author, and provide an ISBN to fetch a cover image.
+- **View Books**: See a list of all books, including their title, author, and cover image.
+- **Search Books**: Search for books by title or author name.
+- **Sort Books**: Sort the list of books by title or by author.
+- **Delete Books**: Remove a book from the library (and remove the author if no other books are associated with them).
+
+---
+## How It Works
+**Adding Authors and Books**:
+Users can add authors and books through the web interface. Author and book data are stored in the SQLite database using SQLAlchemy. If a valid ISBN is provided, the Open Library API is used to retrieve the book cover image.
+
+**Displaying Books**:
+The home page displays all books, including their title, author, and cover image. If no cover image is found via the API, a default image is used.
+
+**Searching and Sorting**:
+Users can search for books by title or author, and sort them by either title or author name using SQLAlchemy query filters.
+
+**Deleting Books**:
+When a book is deleted, if the associated author has no other books, the author is also deleted from the database. This ensures the database remains clean and free of unused author records.
+
+## Routes
+Routes
+** / - Displays all books in the library with cover images.
+** /add_author - Form to add a new author.
+** /add_book - Form to add a new book.
+** /sort_books?sort_by=title|author - Sort books by title or author.
+** /search?query=<query> - Search books by title or author.
+** /book/<int:book_id>/delete - Delete a book by its ID.
